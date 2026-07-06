@@ -19,6 +19,8 @@ public:
 
 private:
 	void init();
+	void loadDeviceType();
+	void loadCalibrationFile();
 
 private slots:
 	void on_btn_connect_clicked();

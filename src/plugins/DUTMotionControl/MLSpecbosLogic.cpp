@@ -335,7 +335,7 @@ bool MLSpecbosLogic::SetCalibrationFileNumber(BYTE bCalibNr) {
         LoggingWrapper::instance()->error("MLSpecbosLogic: not open");
         return false;
     }
-    if (bCalibNr < 0 || bCalibNr > 12) {
+    if (bCalibNr < 1 || bCalibNr > 12) {
         m_lastError = "Invalid calibration file number.";
         LoggingWrapper::instance()->error("MLSpecbosLogic: invalid calibration file number");
         return false;
@@ -509,6 +509,22 @@ bool MLSpecbosLogic::GetXYZxy(float& X, float& Y, float& Z, float& x, float& y,
     lum = m_measurementResults->fPhoto;
 
     return true;
+}
+
+std::string MLSpecbosLogic::GetCalibrationFile(int num)
+{
+    std::string CalibrationFile_str;
+    if (0 <= num && num <= MAX_CALIBRATION_FILE_NUM - 1)
+    {
+        CalibrationFile_str = m_CalibrationInfo->calibrationFiles[num].cRemark;
+    }
+    else
+    {
+        CalibrationFile_str = "";
+        LoggingWrapper::instance()->error("MLSpecbosLogic: get calibration file failed, beyond max calibration fie num!");
+    }
+
+    return CalibrationFile_str;
 }
 
 MeasurementResults* MLSpecbosLogic::GetMeasurementResults() {

@@ -1,5 +1,6 @@
 #include "SpecbosWidgets.h"
 #include "loggingwrapper.h"
+#include "MLSpecbosCommon.h"
 #include <QtConcurrent>
 #include <QMessageBox>
 
@@ -16,6 +17,31 @@ void SpecbosWidgets::init()
 	mlspecbos = std::make_unique<ML::MLSpecbos::MLSpecbosLogic>();
 }
 
+void SpecbosWidgets::loadDeviceType()
+{
+	int device_type;
+	if ("specbos2501" == ui.deviceType->currentText())
+	{
+		device_type = 4;
+	}
+	else
+	{
+		device_type = 4;
+	}
+	mlspecbos->SetDeviceType(ML::MLSpecbos::DeviceType(device_type));
+}
+
+void SpecbosWidgets::loadCalibrationFile()
+{
+	mlspecbos->LoadCalibrationFile();
+	for (int num = 0; num < MAX_CALIBRATION_FILE_NUM; num++)
+	{
+		std::string calibrationFileName = mlspecbos->GetCalibrationFile(num);
+		ui.comboBox_file->addItem(QString::fromStdString(calibrationFileName), QVariant(num + 1));
+	}
+
+}
+
 void SpecbosWidgets::on_btn_connect_clicked()
 {
 	if (!isOpen)
@@ -26,6 +52,9 @@ void SpecbosWidgets::on_btn_connect_clicked()
 		{
 			isOpen = true;
 			ui.label_status->setText("connected.");
+
+			loadDeviceType();
+			loadCalibrationFile();
 		}
 		else
 		{
@@ -55,26 +84,37 @@ void SpecbosWidgets::on_btnCalibrate_clicked()
 {
 	if (!isOpen)
 	{
-		LoggingWrapper::instance()->warn("Specbos is not connected.");
+		LoggingWrapper::instance()->error("Specbos is not connected.");
 		return;
 	}
 
-	int device_type;
-	if ("specbos2501" == ui.deviceType->currentText())
+	if (ui.comboBox_file->currentText() == "-- not calibrated --")
 	{
-		device_type = 4;
+		LoggingWrapper::instance()->error("Specbos file is not calibrated");
+		return;
 	}
 	else
 	{
-		device_type = 4;
+		int fileNum = ui.comboBox_file->currentData().toInt();
+		if (!mlspecbos->SetCalibrationFileNumber(fileNum))
+		{
+			return;
+		}
 	}
 
-	mlspecbos->SetDeviceType(ML::MLSpecbos::DeviceType(device_type));
-	mlspecbos->LoadCalibrationFile();
-	mlspecbos->SetCalibrationFileNumber(ui.lineEdit_fileNumber->text().toInt());
-	mlspecbos->SetAverage(ui.lineEdit_average->text().toInt());
-	mlspecbos->SetSyncFreq(ui.lineEdit_freq->text().toFloat());
-	mlspecbos->SetFixedTintConf(ui.lineEdit_fTint->text().toFloat());
+	if (!mlspecbos->SetAverage(ui.lineEdit_average->text().toInt()))
+	{
+		return;
+	}
+	if (!mlspecbos->SetSyncFreq(ui.lineEdit_freq->text().toFloat()))
+	{
+		return;
+	}
+	if (!mlspecbos->SetFixedTintConf(ui.lineEdit_fTint->text().toFloat()))
+	{
+		return;
+	}
+	
 	mlspecbos->TakeMeasurement();
 
 	m_measurementResults = mlspecbos->GetMeasurementResults();

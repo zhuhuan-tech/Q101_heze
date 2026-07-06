@@ -72,6 +72,8 @@ namespace ML {
             // get measurement result of X, Y, Z, x, y
             bool GetXYZxy(float& X, float& Y, float& Z, float& x, float& y, float& lum);
 
+            std::string GetCalibrationFile(int num);
+
             MeasurementResults* GetMeasurementResults();
 
             std::string GetLastError();
