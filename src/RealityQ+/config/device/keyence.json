@@ -1,0 +1,13 @@
+{
+	"Keyence": {
+		"Type": "eth",
+		"id": 0,
+		"ip":"10.0.0.107",
+		"port": 24685
+	},
+	"Ranging": {
+		"Max": 40,
+		"Min": -40,
+		"ZeroPos": 0
+	}
+}

@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<root main_tree_to_execute="BehaviorTree">
+ <BehaviorTree ID="BehaviorTree">
+  <!-- Add nodes here -->
+  <Sequence name="Sequence">
+   <Action name="System_Date" ID="System_Date" date_key="cur_date"/>
+   <Action name="System_DateTime" ID="System_DateTime" date_time_key="cur_datetime"/>
+   <Parallel name="Parallel">
+    <Action name="AA_Connect_MVCamera" ID="AA_Connect_MVCamera"/>
+    <Action name="AA_Connect_MeasureCameraMotionModule" ID="AA_Connect_MeasureCameraMotionModule"/>
+    <Action name="AA_Connect_Keyence" ID="AA_Connect_Keyence"/>
+   </Parallel>
+   <Action name="Colorimeter_Connect_All_Async" ID="Colorimeter_Connect_All_Async"/>
+   <Action name="AA_Dut_GetDutType" ID="AA_Dut_GetDutType" size_key="size" eyetype_key="eyetype" eye_type="000" eye_relief="1"/>
+   <Action name="AA_SetMotionMoveSpeed" ID="AA_SetMotionMoveSpeed" projector_dxdy="5" dut_x="" dut_y="" dut_z="" imaging_x="5" imaging_y="5" imaging_z="5" imaging_dxdy="" reticle_x="" reticle_y=""/>
+   <Action name="SetBlackboard" ID="SetBlackboard" output_key="dutid" value="SL1"/>
+   <Action name="SetBlackboard" ID="SetBlackboard" output_key="focus" value="4"/>
+   <Action name="SetBlackboard" ID="SetBlackboard" output_key="fiducial_expo_time" value="0.00001"/>
+   <Action name="OM_Open" ID="OM_Open" module="X"/>
+   <Action name="OM_DutTilt_Abs_Async" ID="OM_DutTilt_Abs_Async" module="X" degree="-0.988"/>
+   <Action name="OM_Open" ID="OM_Open" module="Z"/>
+   <Action name="OM_DutTilt_Abs_Async" ID="OM_DutTilt_Abs_Async" module="Z" degree="1.140"/>
+   <Parallel name="Parallel">
+    <Sequence name="Sequence">
+     <Action name="AA_Imaging_LoadImaging" ID="AA_Imaging_LoadImaging"/>
+     <Action name="AA_Imaging_Ranging" ID="AA_Imaging_Ranging"/>
+     <Action name="AA_Imaging_FindFiducial" ID="AA_Imaging_FindFiducial" is_auto="1" is_save="1" is_auto_exposure="1" exposure_time="{fiducial_expo_time}" root_dir="E:\SAT_GRR\{cur_date}_MetricsTest" dut_seq="{dutid}_{cur_datetime}"/>
+     <Action name="AA_Imaging_Align_EntrancePupil" ID="AA_Imaging_Align_EntrancePupil"/>
+     <Action name="OM_Open" ID="OM_Open" module="X"/>
+     <Action name="OM_DutTilt_Async" ID="OM_DutTilt_Async" module="X" degree="6"/>
+     <Action name="OM_Open" ID="OM_Open" module="Z"/>
+     <Action name="OM_DutTilt_Async" ID="OM_DutTilt_Async" module="Z" degree="-5.1"/>
+     <Action name="AA_Imaging_Rotary_Compensation" ID="AA_Imaging_Rotary_Compensation" cant="5.1" pant="-6"/>
+    </Sequence>
+   </Parallel>
+  </Sequence>
+ </BehaviorTree>
+</root>

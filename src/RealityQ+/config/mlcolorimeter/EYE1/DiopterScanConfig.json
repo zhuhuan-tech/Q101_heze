@@ -1,0 +1,20 @@
+{
+	"DiopterMax": 10,
+	"DiopterMin": 6,
+	"InfinityPosition": 4.8,
+	"FocalLength": 22.8,
+	"PixelSize": 0.0046,
+	"FocalPlanesObjectSpace": -3.064,
+	"Freq": 7.5,
+	"RoughStepNumber": 11,
+	"IsUseFineAdjust": true,
+	"FineStepNumber": 20,
+	"ROIs": [
+		{
+			"X": 4000,
+			"Y": 3000,
+			"Width": 200,
+			"Height": 200
+		}
+	]
+}

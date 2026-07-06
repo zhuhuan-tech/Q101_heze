@@ -1,0 +1,37 @@
+{
+  "SLB_LoadImageXYZPosition": {
+    "X": -20.7216,
+    "Y": 87.5959,
+    "Z": 46.7678
+  },
+  "SLB_ImagingXYZPosition": {
+    "X": -136.5550,
+    "Y": 66.4540,
+    "Z": 83.8290
+  },
+  "SLB_DutXYZPosition": {
+    "X": 36.011,
+    "Y": 132.7322,
+    "Z": 50
+  },
+  "SLB_ProjectionTiptilt": {
+    "dX": 0.0177,
+    "dY": -0.0911
+  },
+  "SLB_ImagingTiptilt": {
+    "dX": -0.0918,
+    "dY": 0.0918
+  },
+  "SLB_ImageXYZLimit": {
+    "Min": {
+      "X": -139.5,
+      "Y": 20,
+      "Z": -5
+    },
+    "Max": {
+      "X": -10,
+      "Y": 137.59,
+      "Z": 87
+    }
+  }
+}

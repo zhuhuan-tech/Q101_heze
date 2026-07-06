@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<root main_tree_to_execute="BehaviorTree">
+ <BehaviorTree ID="BehaviorTree">
+  <Sequence name="Sequence">
+   <Action name="System_Date" ID="System_Date" date_key="cur_date"/>
+   <Action name="System_DateTime" ID="System_DateTime" date_time_key="cur_datetime"/>
+   <Action name="Colorimeter_Connect_All_Async" ID="Colorimeter_Connect_All_Async"/>
+   <Action name="AA_Dut_GetDutType" ID="AA_Dut_GetDutType" size_key="size" eyetype_key="eyetype" eye_type="000" eye_relief="1"/>
+   <Action name="AA_SetMotionMoveSpeed" ID="AA_SetMotionMoveSpeed" projector_dxdy="8" dut_x="0" dut_y="0" dut_z="0" imaging_x="5" imaging_y="5" imaging_z="5" imaging_dxdy="0" reticle_x="0" reticle_y="0"/>
+   <Action name="SetBlackboard" ID="SetBlackboard" output_key="focus" value="4"/>
+   <Action name="SetBlackboard" ID="SetBlackboard" output_key="fiducial_expo_time" value="0.0001"/>
+   <Action name="SetBlackboard" ID="SetBlackboard" output_key="dutid" value="SL1"/>
+   <Parallel name="Parallel">
+    <Action name="Colorimeter_LoadCalibrationData" ID="Colorimeter_LoadCalibrationData" aperture="2" binning="4" colorfilter_list="X,Y,Z,Clear" ndfliter_list="" lightsource_list="W" is_load_dark="1" is_load_colorshift="1" is_load_ffc="1" is_load_distortion="1" is_load_exposure="1" is_load_fliprotation="1" is_load_luminance="0" is_load_fourcolor="1"/>
+    <Sequence name="Sequence">
+     <Action name="IQ_SetEyeboxList" ID="IQ_SetEyeboxList" eyeboxlist="5" key="eyeboxids"/>
+    </Sequence>
+    <Sequence name="Sequence">
+     <Action name="Colorimeter_Camera_StopGrabbing" ID="Colorimeter_Camera_StopGrabbing"/>
+     <Action name="Colorimeter_Motion_SetFocus" ID="Colorimeter_Motion_SetFocus" focus="{focus}"/>
+     <Action name="Colorimeter_Camera_SetBinningSelector" ID="Colorimeter_Camera_SetBinningSelector" binning_selector="1"/>
+     <Action name="Colorimeter_Camera_SetBinningMode" ID="Colorimeter_Camera_SetBinningMode" binning_mode="Sum"/>
+    </Sequence>
+    <Action name="AA_WaveGrating_Set" ID="AA_WaveGrating_Set" wave_type="2"/>
+   </Parallel>
+   <Action name="SetBlackboard" ID="SetBlackboard" output_key="xyzc_select" value="Y"/>
+   <!--control exposure time-->
+   <Action name="SetBlackboard" ID="SetBlackboard" output_key="exposure_init_time" value="500"/>
+   <Action name="SetBlackboard" ID="SetBlackboard" output_key="binning" value="4"/>
+   <Action name="SetBlackboard" ID="SetBlackboard" output_key="is_auto_exposure" value="0"/>
+   <Action name="IQ_UpdateFlipRotation" ID="IQ_UpdateFlipRotation"/>
+   <!--control X degree-->
+   <Action name="SetBlackboard" ID="SetBlackboard" output_key="X_Degree" value="0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,105,110,115,120,125,130,135,140,145,150,155,160,165,170,175,180,-5,-10,-15,-20,-25,-30,-35,-40,-45,-50,-55,-60,-65,-70,-75,-80,-85,-90,-95,-100,-105,-110,-115,-120,-125,-130,-135,-140,-145,-150,-155,-160,-165,-170,-175,-180"/>
+   <!--control Y degree-->
+   <Action name="SetBlackboard" ID="SetBlackboard" output_key="Y_Degree" value="0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90"/>
+   <!--control light wave length-->
+   <Action name="SetBlackboard" ID="SetBlackboard" output_key="Wave_Length" value="410"/>
+   <For name="For" traverse_params="{Wave_Length}">
+    <Sequence name="Sequence">
+     <Action name="System_GetForNodeValue1" ID="System_GetForNodeValue1" value_key="cur_wave_length"/>
+     <Action name="AA_WaveLength_Set" ID="AA_WaveLength_Set" wave_length="{cur_wave_length}"/>
+     <For name="For" traverse_params="{X_Degree}">
+      <Sequence name="Sequence">
+       <Action name="System_GetForNodeValue1" ID="System_GetForNodeValue1" value_key="cur_Xdegree"/>
+       <Action name="AA_2DMotion_Set" ID="AA_2DMotion_Set" phi="{cur_Xdegree}" theta="0"/>
+       <For name="For" traverse_params="{Y_Degree}">
+        <Sequence name="Sequence">
+         <Action name="System_GetForNodeValue1" ID="System_GetForNodeValue1" value_key="cur_Ydegree"/>
+         <Action name="AA_2DMotion_Set" ID="AA_2DMotion_Set" phi="{cur_Xdegree}" theta="{cur_Ydegree}"/>
+         <For name="For" traverse_params="{eyeboxids}">
+          <Sequence name="Sequence">
+           <Action name="System_GetForNodeValue1" ID="System_GetForNodeValue1" value_key="cur_eb"/>
+           <For name="For" traverse_params="W">
+            <Sequence name="Sequence">
+             <Action name="System_GetForNodeValue1" ID="System_GetForNodeValue1" value_key="color"/>
+             <Action name="IQ_Metrics_CreateResultFile" ID="IQ_Metrics_CreateResultFile" root_dir="E:\SAT_GRR\{cur_date}_MetricsTest" dut_seq="{dutid}_{cur_datetime}_{cur_wave_length}" csvname="{dutid}_metrics_{eyeboxids}" all_csvname="metrics_{eyeboxids}_all" phi_degree="{cur_Xdegree}" theta_degree="{cur_Ydegree}" exp_time="{exposure_init_time}" IsOffline="0" IsBatchProcessing="0"/>
+             <Action name="Colorimeter_Capture_GrayImage_Async" ID="Colorimeter_Capture_GrayImage_Async" aperture="2" dutid="{dutid}" eyeboxid="{cur_eb}" binning="{binning}" nd_filter="" color_filter="Clear" light_source="{color}" image_type="solid" is_set_et="1" is_auto_et="{is_auto_exposure}" exposure_time="{exposure_init_time}" is_convert_16bit="0" convert_method="0" save_raw_image="1" save_calibration_image="0" is_hdr="0" max_exposure_time=""/>
+            </Sequence>
+           </For>
+          </Sequence>
+         </For>
+        </Sequence>
+       </For>
+      </Sequence>
+     </For>
+    </Sequence>
+   </For>
+   <Action name="AA_2DMotion_Set" ID="AA_2DMotion_Set" phi="0" theta="0"/>
+   <Action name="Colorimeter_WaitForCaptureEnd" ID="Colorimeter_WaitForCaptureEnd" timeout="300"/>
+  </Sequence>
+ </BehaviorTree>
+</root>

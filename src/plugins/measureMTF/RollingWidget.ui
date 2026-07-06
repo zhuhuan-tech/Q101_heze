@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>RollingWidgetClass</class>
+ <widget class="QWidget" name="RollingWidgetClass">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1248</width>
+    <height>812</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>RollingWidget</string>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,0,0,0">
+   <item>
+    <widget class="QWidget" name="widget1" native="true">
+     <layout class="QFormLayout" name="formLayout">
+      <item row="0" column="0" colspan="2">
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QToolButton" name="connectCamera">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>...</string>
+          </property>
+          <property name="icon">
+           <iconset resource="mtfresource.qrc">
+            <normaloff>:/image/image/connect.png</normaloff>:/image/image/connect.png</iconset>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="disconnectCamera">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>...</string>
+          </property>
+          <property name="icon">
+           <iconset resource="mtfresource.qrc">
+            <normaloff>:/image/image/disconnect.png</normaloff>:/image/image/disconnect.png</iconset>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="loadPictureButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>...</string>
+          </property>
+          <property name="icon">
+           <iconset resource="mtfresource.qrc">
+            <normaloff>:/image/image/loadROI.png</normaloff>:/image/image/loadROI.png</iconset>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="1" column="0">
+       <widget class="QWidget" name="widget_3" native="true">
+        <layout class="QVBoxLayout" name="verticalLayout_2">
+         <item>
+          <widget class="QRadioButton" name="normal">
+           <property name="text">
+            <string>Normal Mode</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="rolling">
+           <property name="text">
+            <string>Rolling Mode</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="groupBox">
+           <property name="title">
+            <string>Normal Mode</string>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout">
+            <item>
+             <widget class="QRadioButton" name="radioBtn_liveImage">
+              <property name="text">
+               <string>Live Image</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="cbx_showCross">
+              <property name="text">
+               <string>Show Cross</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="imgSave">
+              <property name="text">
+               <string>Save Image</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="groupBox_2">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>50</height>
+            </size>
+           </property>
+           <property name="title">
+            <string>Rolling Mode</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>520</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="CameraViewer" name="camView" native="true"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QToolButton" name="btn_unfold">
+     <property name="styleSheet">
+      <string notr="true">QToolButton
+{
+  border-style: flat;
+  background: transparent;
+}</string>
+     </property>
+     <property name="text">
+      <string>...</string>
+     </property>
+     <property name="icon">
+      <iconset resource="mtfresource.qrc">
+       <normaloff>:/image/image/double-left.png</normaloff>:/image/image/double-left.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>23</width>
+       <height>30</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QWidget" name="widget2" native="true">
+     <property name="minimumSize">
+      <size>
+       <width>200</width>
+       <height>0</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QToolButton" name="btn_fold">
+     <property name="styleSheet">
+      <string notr="true">QToolButton
+{
+  border-style: flat;
+  background: transparent;
+}</string>
+     </property>
+     <property name="text">
+      <string>...</string>
+     </property>
+     <property name="icon">
+      <iconset resource="mtfresource.qrc">
+       <normaloff>:/image/image/double-right.png</normaloff>:/image/image/double-right.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>23</width>
+       <height>30</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>CameraViewer</class>
+   <extends>QWidget</extends>
+   <header>cameraviewer.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="mtfresource.qrc"/>
+ </resources>
+ <connections/>
+</ui>
