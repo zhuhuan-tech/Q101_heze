@@ -23,6 +23,10 @@ namespace DUTMotion {
 		NodeStatus OM_Degree_Async(BT::TreeNode& node);
 		NodeStatus OM_Degree_Sync(BT::TreeNode& node);
 		NodeStatus OM_Degree_Abs_Async(BT::TreeNode& node);
+		NodeStatus Specbos_Connect(BT::TreeNode& node);
+		NodeStatus Specbos_Disconnect(BT::TreeNode& node);
+		NodeStatus Specbos_LoadCalibration(BT::TreeNode& node);
+		NodeStatus Specbos_Measurement(BT::TreeNode& node);
 
 	private:
 		static DUTMotion4Recipe* self;
@@ -87,6 +91,48 @@ namespace DUTMotion {
 			{
 				BT::InputPort<std::string>("module", "string, e.g. X/Y/Z"),
 				BT::InputPort<std::string>("degree", "double")
+			});
+		factory.registerSimpleAction(
+			"Specbos_Connect",
+			[=](BT::TreeNode& node)-> BT::NodeStatus
+			{
+				return obj->Specbos_Connect(node);
+			},
+			{
+				BT::InputPort<std::string>("com", "int, e.g. 1/2/3")
+			});
+		factory.registerSimpleAction(
+			"Specbos_Disconnect",
+			[=](BT::TreeNode& node)-> BT::NodeStatus
+			{
+				return obj->Specbos_Disconnect(node);
+			},
+			{
+				
+			});
+		factory.registerSimpleAction(
+			"Specbos_LoadCalibration",
+			[=](BT::TreeNode& node)-> BT::NodeStatus
+			{
+				return obj->Specbos_LoadCalibration(node);
+			},
+			{
+				BT::InputPort<std::string>("deviceType", "int, e.g. 4"),
+				BT::InputPort<std::string>("fileNum", "int, e.g. 4"),
+				BT::InputPort<std::string>("average", "int, e.g. 4"),
+				BT::InputPort<std::string>("freq", "float, e.g. 4"),
+				BT::InputPort<std::string>("integTime", "float, e.g. 4")
+			});
+		factory.registerSimpleAction(
+			"Specbos_Measurement",
+			[=](BT::TreeNode& node)-> BT::NodeStatus
+			{
+				return obj->Specbos_Measurement(node);
+			},
+			{
+				BT::InputPort<std::string>("postion", "int, e.g. 4"),
+				BT::InputPort<std::string>("path", "E:\project\MLSpecbos"),
+				BT::InputPort<std::string>("csv_name", "measure_result")
 			});
 	}
 }

@@ -3,8 +3,25 @@
 #include "MLSpecbosConfigManage.h"
 #include "loggingwrapper.h"
 #include "jeti_core.h"
+#include <mutex>
 
 using namespace ML::MLSpecbos;
+
+MLSpecbosLogic* MLSpecbosLogic::m_instance = nullptr;
+
+MLSpecbosLogic* MLSpecbosLogic::getInstance()
+{
+    if (!m_instance)
+    {
+        static std::mutex mutex;
+        std::unique_lock<std::mutex> locker(mutex);
+        if (!m_instance)
+        {
+            m_instance = new MLSpecbosLogic();
+        }
+    }
+    return m_instance;
+}
 
 MLSpecbosLogic::MLSpecbosLogic() {
     m_configManger = new MLSpecbosConfigManage();

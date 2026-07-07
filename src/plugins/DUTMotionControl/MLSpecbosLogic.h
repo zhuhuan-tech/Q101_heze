@@ -11,6 +11,9 @@ namespace ML {
         class MLSpecbosConfigManage;
         class DUTMOTIONCONTROL_EXPORT MLSpecbosLogic {
         public:
+
+            static MLSpecbosLogic* getInstance();
+
             MLSpecbosLogic();
 
             ~MLSpecbosLogic();
@@ -91,6 +94,7 @@ namespace ML {
             void LoadCalibrationFile();
 
         private:
+            static MLSpecbosLogic* m_instance;
             MLSpecbosConfigManage* m_configManger;
             SpecbosDeviceInfo m_DeviceInfo;
             CalibrationInfo* m_CalibrationInfo;

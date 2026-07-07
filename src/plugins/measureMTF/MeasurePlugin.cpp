@@ -126,8 +126,8 @@ bool MeasurePlugin::initialize(const QStringList &arguments, QString *errorMessa
     //{
     //    m_measureMode->setHide(true);
     //}
-    //IQT::IQT4Recipe::getInstance();
-    //System::System4Recipe::getInstance();
+    IQT::IQT4Recipe::getInstance();
+    System::System4Recipe::getInstance();
     //MTFResultWidget *mtfResult = MTFResultWidget::getInstance();
     //RecipeWrapperRegistry::Instance()->registoryResultWidget("MTF", mtfResult);
     //MTFWrapper *wrapper = new MTFWrapper(this);

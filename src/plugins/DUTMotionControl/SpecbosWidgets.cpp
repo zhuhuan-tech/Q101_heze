@@ -4,6 +4,7 @@
 #include <QtConcurrent>
 #include <QMessageBox>
 
+using namespace ML::MLSpecbos;
 SpecbosWidgets::SpecbosWidgets(QString toolBoxName, QWidget* parent) : IToolBox(toolBoxName, parent)
 {
 	ui.setupUi(this);
@@ -14,7 +15,7 @@ void SpecbosWidgets::init()
 {
 	ui.label_status->setText("Not connected.");
 	isOpen = false;
-	mlspecbos = std::make_unique<ML::MLSpecbos::MLSpecbosLogic>();
+	//mlspecbos = std::make_unique<ML::MLSpecbos::MLSpecbosLogic>();
 }
 
 void SpecbosWidgets::loadDeviceType()
@@ -28,15 +29,15 @@ void SpecbosWidgets::loadDeviceType()
 	{
 		device_type = 4;
 	}
-	mlspecbos->SetDeviceType(ML::MLSpecbos::DeviceType(device_type));
+	MLSpecbosLogic::getInstance()->SetDeviceType(DeviceType(device_type));
 }
 
 void SpecbosWidgets::loadCalibrationFile()
 {
-	mlspecbos->LoadCalibrationFile();
+	MLSpecbosLogic::getInstance()->LoadCalibrationFile();
 	for (int num = 0; num < MAX_CALIBRATION_FILE_NUM; num++)
 	{
-		std::string calibrationFileName = mlspecbos->GetCalibrationFile(num);
+		std::string calibrationFileName = MLSpecbosLogic::getInstance()->GetCalibrationFile(num);
 		ui.comboBox_file->addItem(QString::fromStdString(calibrationFileName), QVariant(num + 1));
 	}
 
@@ -46,9 +47,9 @@ void SpecbosWidgets::on_btn_connect_clicked()
 {
 	if (!isOpen)
 	{
-		mlspecbos->Init("E:\\project\\MLSpecbos\\jeticonfig.ini");
+		MLSpecbosLogic::getInstance()->Init("E:\\project\\MLSpecbos\\jeticonfig.ini");
 		std::string COM_str = ui.lineEdit_COM->text().toStdString();
-		if (mlspecbos->Open("COM" + COM_str))
+		if (MLSpecbosLogic::getInstance()->Open("COM" + COM_str))
 		{
 			isOpen = true;
 			ui.label_status->setText("connected.");
@@ -67,7 +68,7 @@ void SpecbosWidgets::on_btn_disconnect_clicked()
 {
 	if (isOpen)
 	{
-		if (mlspecbos->Close())
+		if (MLSpecbosLogic::getInstance()->Close())
 		{
 			ui.label_status->setText("Not connected.");
 			isOpen = false;
@@ -96,28 +97,28 @@ void SpecbosWidgets::on_btnCalibrate_clicked()
 	else
 	{
 		int fileNum = ui.comboBox_file->currentData().toInt();
-		if (!mlspecbos->SetCalibrationFileNumber(fileNum))
+		if (!MLSpecbosLogic::getInstance()->SetCalibrationFileNumber(fileNum))
 		{
 			return;
 		}
 	}
 
-	if (!mlspecbos->SetAverage(ui.lineEdit_average->text().toInt()))
+	if (!MLSpecbosLogic::getInstance()->SetAverage(ui.lineEdit_average->text().toInt()))
 	{
 		return;
 	}
-	if (!mlspecbos->SetSyncFreq(ui.lineEdit_freq->text().toFloat()))
+	if (!MLSpecbosLogic::getInstance()->SetSyncFreq(ui.lineEdit_freq->text().toFloat()))
 	{
 		return;
 	}
-	if (!mlspecbos->SetFixedTintConf(ui.lineEdit_fTint->text().toFloat()))
+	if (!MLSpecbosLogic::getInstance()->SetFixedTintConf(ui.lineEdit_fTint->text().toFloat()))
 	{
 		return;
 	}
 	
-	mlspecbos->TakeMeasurement();
+	MLSpecbosLogic::getInstance()->TakeMeasurement();
 
-	m_measurementResults = mlspecbos->GetMeasurementResults();
+	m_measurementResults = MLSpecbosLogic::getInstance()->GetMeasurementResults();
 
 	ui.label_chromx->setText(QString::number(m_measurementResults->fChromx, 'f', 3));
 	ui.label_chromy->setText(QString::number(m_measurementResults->fChromy, 'f', 3));

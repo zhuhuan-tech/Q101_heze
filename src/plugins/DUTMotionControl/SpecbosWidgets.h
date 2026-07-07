@@ -30,7 +30,7 @@ private slots:
 private:
 	Ui::SpecbosWidgetsClass ui;
 	bool isOpen;
-	std::unique_ptr<ML::MLSpecbos::MLSpecbosLogic> mlspecbos;
+	//std::unique_ptr<ML::MLSpecbos::MLSpecbosLogic> mlspecbos;
 	ML::MLSpecbos::MeasurementConfig m_measurementConfig;
 	ML::MLSpecbos::MeasurementResults* m_measurementResults;
 	ML::MLSpecbos::CalibrationInfo* m_CalibrationInfo;
