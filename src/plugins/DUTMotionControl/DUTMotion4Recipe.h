@@ -131,8 +131,7 @@ namespace DUTMotion {
 			},
 			{
 				BT::InputPort<std::string>("postion", "int, e.g. 4"),
-				BT::InputPort<std::string>("path", "E:\project\MLSpecbos"),
-				BT::InputPort<std::string>("csv_name", "measure_result")
+				BT::InputPort<std::string>("path", "E:\project\MLSpecbos")
 			});
 	}
 }

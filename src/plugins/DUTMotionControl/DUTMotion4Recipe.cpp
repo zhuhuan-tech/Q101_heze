@@ -255,15 +255,17 @@ NodeStatus DUTMotion4Recipe::Specbos_Measurement(BT::TreeNode& node)
 {
 	QString postion = getNodeValueByName(node, "postion");
 	QString path = getNodeValueByName(node, "path"); 
-	QString csv_name = getNodeValueByName(node, "csv_name");
 
-	QString file_path = path + "\\" + csv_name + ".csv";
+	QString file_path = path + "\\" + "Wavelength" + ".csv";
+	QString file_path2 = path + "\\" + "Chrom" + ".csv";
 	MLSpecbosLogic::getInstance()->TakeMeasurement();
 	MeasurementResults* res = MLSpecbosLogic::getInstance()->GetMeasurementResults();
 	MeasurementConfig config = MLSpecbosLogic::getInstance()->GetMeasurementConfig();
 
 	QFile file(file_path);
 	QStringList lines;
+	QFile file2(file_path2);
+	QStringList lines2;
 
 	// 文件存在，读取原数据
 	if (file.exists())
@@ -280,15 +282,27 @@ NodeStatus DUTMotion4Recipe::Specbos_Measurement(BT::TreeNode& node)
 			file.close();
 		}
 	}
+	if (file2.exists())
+	{
+		if (file2.open(QIODevice::ReadOnly | QIODevice::Text))
+		{
+			QTextStream in(&file2);
+
+			while (!in.atEnd())
+			{
+				lines2.append(in.readLine());
+			}
+
+			file2.close();
+		}
+	}
 
 	// 第一次创建CSV
 	if (lines.isEmpty())
 	{
 		QString header = "Wavelength/position";
 		header += "," + postion;
-
 		lines.append(header);
-
 		for (int i = config.dwBegin - 1; i < config.dwEnd; i++)
 		{
 			int wavelength = i + 1;
@@ -323,6 +337,32 @@ NodeStatus DUTMotion4Recipe::Specbos_Measurement(BT::TreeNode& node)
 		}
 	}
 
+	if (lines2.isEmpty())
+	{
+		QString header = "Chrom/position";
+		header += "," + postion;
+		lines2.append(header);
+		lines2.append("chromx," +QString::number(res->fChromx, 'f', 3));
+		lines2.append("chromy," + QString::number(res->fChromy, 'f', 3));
+		lines2.append("Y," + QString::number(res->fY, 'f', 3));
+	}
+	else
+	{
+		// 当前已有多少列
+		QStringList header = lines2[0].split(",");
+
+		int newColumn = header.size();
+
+		// 增加表头
+		lines2[0] += "," + postion;
+
+		// 增加数据列
+		lines2[1] += "," + QString::number(res->fChromx, 'f', 3);
+		lines2[2] += "," + QString::number(res->fChromy, 'f', 3);
+		lines2[3] += "," + QString::number(res->fY, 'f', 3);
+	}
+
+
 	// 重新写文件
 	if (file.open(QIODevice::WriteOnly | QIODevice::Text))
 	{
@@ -334,8 +374,6 @@ NodeStatus DUTMotion4Recipe::Specbos_Measurement(BT::TreeNode& node)
 		}
 
 		file.close();
-
-		return BT::NodeStatus::SUCCESS;
 	}
 	else
 	{
@@ -343,5 +381,26 @@ NodeStatus DUTMotion4Recipe::Specbos_Measurement(BT::TreeNode& node)
 		LoggingWrapper::instance()->error(message);
 		return BT::NodeStatus::FAILURE;
 	}
+
+	if (file2.open(QIODevice::WriteOnly | QIODevice::Text))
+	{
+		QTextStream out(&file2);
+
+		for (const QString& line : lines2)
+		{
+			out << line << "\n";
+		}
+
+		file2.close();
+
+	}
+	else
+	{
+		QString message = QString("Recipe [ Specbos : Specbos_Measurement ] run error, write file failed");
+		LoggingWrapper::instance()->error(message);
+		return BT::NodeStatus::FAILURE;
+	}
+
+	return BT::NodeStatus::SUCCESS;
 
 }
