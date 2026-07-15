@@ -74,7 +74,7 @@ void MAalignment::extensionsInitialized()
 {
     //ProjectorTiltControlWidget *projectorTiltControlWidget = new ProjectorTiltControlWidget("Projector");
     //DeviceControlWidget *deviceControlWidgetTiltDut = new DeviceControlWidget("Dut Tilt Station");
-    DeviceControlWidget *deviceControlWidgetTiltPro = new DeviceControlWidget("Motion2D PLC");
+    //DeviceControlWidget *deviceControlWidgetTiltPro = new DeviceControlWidget("Motion2D PLC");
     //DeviceControlWidget* dutTiltControlWidget = new DeviceControlWidget("Motion2D-Tilt Imaging");
 
     //InitCalibrateCfgAction* action = new InitCalibrateCfgAction(Constants::TOGGLE_INIT_CALIBRATE_CFG, Constants::M_TOOLS);

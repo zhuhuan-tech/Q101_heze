@@ -136,12 +136,14 @@ xcopy "$(ProjectDir)DUTMotionIcons" "$(SolutionDir)bin\$(Platform)\$(Configurati
     <ClCompile Include="ini.c" />
     <ClCompile Include="MLSpecbosConfigManage.cpp" />
     <ClCompile Include="MLSpecbosLogic.cpp" />
+    <ClCompile Include="SpecbosMotionWidget.cpp" />
     <ClCompile Include="SpecbosWidgets.cpp" />
     <ClInclude Include="ini.h" />
     <ClInclude Include="MLSpecbosCommon.h" />
     <ClInclude Include="MLSpecbosConfigManage.h" />
     <ClInclude Include="MLSpecbosLogic.h" />
     <ClInclude Include="resource.h" />
+    <QtMoc Include="SpecbosMotionWidget.h" />
     <QtMoc Include="SpecbosWidgets.h" />
     <QtMoc Include="ImageShowLabel.h" />
     <QtMoc Include="DUTMotion4Recipe.h" />
@@ -152,6 +154,7 @@ xcopy "$(ProjectDir)DUTMotionIcons" "$(SolutionDir)bin\$(Platform)\$(Configurati
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="DUTMotionWidget.ui" />
+    <QtUic Include="SpecbosMotionWidget.ui" />
     <QtUic Include="SpecbosWidgets.ui" />
   </ItemGroup>
   <ItemGroup>

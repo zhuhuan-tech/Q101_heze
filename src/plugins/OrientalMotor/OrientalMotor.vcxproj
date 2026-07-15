@@ -37,12 +37,12 @@
   </ImportGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="QtSettings">
     <QtInstall>msvc2019_64</QtInstall>
-    <QtModules>core;widgets</QtModules>
+    <QtModules>core;widgets;gui</QtModules>
     <QtBuildConfig>debug</QtBuildConfig>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="QtSettings">
     <QtInstall>msvc2019_64</QtInstall>
-    <QtModules>core;widgets</QtModules>
+    <QtModules>core;widgets;gui</QtModules>
     <QtBuildConfig>release</QtBuildConfig>
   </PropertyGroup>
   <Target Name="QtMsBuildNotFound" BeforeTargets="CustomBuild;ClCompile" Condition="!Exists('$(QtMsBuild)\qt.targets') or !Exists('$(QtMsBuild)\qt.props')">
@@ -125,11 +125,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BD3EMotor.cpp" />
+    <ClCompile Include="BD3EMotorConfig.cpp" />
+    <ClCompile Include="BD3EMotorControl.cpp" />
+    <ClCompile Include="BD3ESerial.cpp" />
+    <ClCompile Include="BD3ESerialManage.cpp" />
     <ClCompile Include="OrientalMotorConfig.cpp" />
     <ClCompile Include="OrientalMotor.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="OrientalMotorControl.cpp" />
+    <ClInclude Include="BD3EMotor.h" />
+    <ClInclude Include="BD3EMotorConfig.h" />
+    <ClInclude Include="BD3EMotorControl.h" />
+    <ClInclude Include="BD3ESerial.h" />
+    <ClInclude Include="BD3ESerialManage.h" />
     <ClInclude Include="MLSerial.h" />
     <ClInclude Include="MLSerialManage.h" />
     <ClInclude Include="OrientalMotorConfig.h" />

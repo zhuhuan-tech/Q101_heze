@@ -185,7 +185,7 @@ void Core::MainWindow::addToolBox(QWidget* wdg, QString toolName)
 
     m_docks.append(dockTab);
     m_Toolbox++;
-    if (m_Toolbox == 2)
+    if (m_Toolbox == 3)
     {
         emit finishDock(m_docks);
     }

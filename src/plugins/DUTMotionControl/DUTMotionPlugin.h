@@ -4,6 +4,7 @@
 #include "dutmotioncontrol_global.h"
 #include "DUTMotionWidget.h"
 #include "SpecbosWidgets.h"
+#include "SpecbosMotionWidget.h"
 
 class DUTMOTIONCONTROL_EXPORT DUTMotionPlugin : public ExtensionSystem::IPlugin
 {

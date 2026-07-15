@@ -1,6 +1,7 @@
 #include "DUTMotion4Recipe.h"
 #include "OrientalMotorControl.h"
 #include "MLSpecbosLogic.h"
+#include "SpecbosMotionWidget.h"
 #include "loggingwrapper.h"
 #include <QFile>
 #include <QTextStream>

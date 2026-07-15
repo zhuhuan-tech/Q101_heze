@@ -20,11 +20,12 @@ bool DUTMotionPlugin::initialize(const QStringList &arguments, QString *errorMes
 {
 
     DUTMotion::DUTMotion4Recipe::getInstance();
-    //DUTMotionWidget *widget = new DUTMotionWidget("Motion3D-Tilt Dut");
+    DUTMotionWidget *widget = new DUTMotionWidget("Motion3D-Tilt Dut");
 
     //DUTMotionWrapper *wrapper = new DUTMotionWrapper(this);
     //RecipeWrapperRegistry::Instance()->regist("DUTMotion", wrapper);
-    SpecbosWidgets* widget = new SpecbosWidgets("Specbos Control");
+    SpecbosWidgets* specbosWidget = new SpecbosWidgets("Specbos Control");
+    SpecbosMotionWidget* specbosMotionWidget = new SpecbosMotionWidget("Specbos Motion");
 
     return true;
 }
