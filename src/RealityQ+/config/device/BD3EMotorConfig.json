@@ -16,49 +16,10 @@
         "FlowControl": "none"
       },
       "PulsePerCycle": 10000,
-      "MoveSpeed": 30,
+      "MoveSpeed": 100,
       "Min": -360,
-      "Max": 360
-    },
-    "1": {
-      "Key": "Y",
-      "Type": "BD3E",
-      "Name": "BD3E Y Axis",
-      "Protocol": "modbus/serial",
-      "MotorType": "BD3E",
-      "Port": "COM3",
-      "Station": 2,
-      "SerialInfo": {
-        "BaudRate": 115200,
-        "ByteSize": 8,
-        "Parity": "none",
-        "StopBit": "onestop",
-        "FlowControl": "none"
-      },
-      "PulsePerCycle": 10000,
-      "MoveSpeed": 30,
-      "Min": -360,
-      "Max": 360
-    },
-    "2": {
-      "Key": "Z",
-      "Type": "BD3E",
-      "Name": "BD3E Z Axis",
-      "Protocol": "modbus/serial",
-      "MotorType": "BD3E",
-      "Port": "COM3",
-      "Station": 3,
-      "SerialInfo": {
-        "BaudRate": 115200,
-        "ByteSize": 8,
-        "Parity": "none",
-        "StopBit": "onestop",
-        "FlowControl": "none"
-      },
-      "PulsePerCycle": 10000,
-      "MoveSpeed": 30,
-      "Min": -360,
-      "Max": 360
+      "Max": 360,
+	  "ZeroPulse": 0
     }
   }
 }

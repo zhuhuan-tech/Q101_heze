@@ -18,6 +18,7 @@ struct BD3EConfiguation {
     int MoveSpeed = 300;
     int Min = -360;
     int Max = 360;
+    int ZeroPulse = 0;
 };
 
 class BD3EMotorConfig {

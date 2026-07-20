@@ -68,6 +68,7 @@ Result BD3EMotorConfig::ReadConfig() {
                     it.value()["MoveSpeed"].get<int>();
                 config.Min = it.value()["Min"].get<int>();
                 config.Max = it.value()["Max"].get<int>();
+                config.ZeroPulse = it.value()["ZeroPulse"].get<int>();
 
                 int type;
                 if (key == "X")

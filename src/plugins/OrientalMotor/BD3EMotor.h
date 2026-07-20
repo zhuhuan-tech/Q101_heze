@@ -68,6 +68,10 @@ public:
     MLBD3EResult ML_SetSpeed(int rpm);
     int  ML_GetSpeed();
 
+    MLBD3EResult ML_SetControlMode(uint16_t mode);
+    MLBD3EResult ML_SetAccelTime(uint16_t ms);
+    MLBD3EResult ML_SetDecelTime(uint16_t ms);
+
     MLBD3EResult ML_MoveByDegree(double degree,
         MLBD3EMotorCallback* cb = nullptr);
     MLBD3EResult ML_MoveByDegreeSync(double degree);

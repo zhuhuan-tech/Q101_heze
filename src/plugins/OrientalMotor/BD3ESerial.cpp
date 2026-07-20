@@ -164,14 +164,20 @@ bool BD3ESerial::ServoOff(int SlaveId) {
 }
 
 bool BD3ESerial::StopMove(int SlaveId) {
-    if (!WriteParam16(SlaveId, 0xC009, 1)) {
+    if (!WriteParam16(SlaveId, 0x600E, 1)) {
         ML::MLSpdlog::instance()->error(
-            "BD3ESerial: emergency stop failed for slave " +
+            "BD3ESerial: stop move P6-00E=1 failed for slave " +
+            std::to_string(SlaveId));
+        return false;
+    }
+    if (!WriteParam16(SlaveId, 0x600E, 0)) {
+        ML::MLSpdlog::instance()->error(
+            "BD3ESerial: stop move recovery P6-00E=0 failed for slave " +
             std::to_string(SlaveId));
         return false;
     }
     ML::MLSpdlog::instance()->info(
-        "BD3ESerial: emergency stop for slave " + std::to_string(SlaveId));
+        "BD3ESerial: stop move for slave " + std::to_string(SlaveId));
     return true;
 }
 
@@ -199,7 +205,7 @@ bool BD3ESerial::ClearAlarm(int SlaveId) {
 
 int BD3ESerial::GetCurrPosition(int SlaveId) {
     uint8_t sID = static_cast<uint8_t>(SlaveId);
-    uint8_t writeData[] = {sID, 0x03, 0xD0, 0x03, 0x00, 0x02};
+    uint8_t writeData[] = {sID, 0x03, 0xD0, 0x23, 0x00, 0x02};
 
     std::vector<uint8_t> readBuffer = SendAndReceive(writeData, sizeof(writeData), 9);
     if (!readBuffer.empty()) {
@@ -244,28 +250,41 @@ bool BD3ESerial::SetSpeed(int SlaveId, int rpm) {
     return ret;
 }
 
-bool BD3ESerial::MoveToTarget(int SlaveId, int targetPulse, int rpm) {
-    int current = GetCurrPosition(SlaveId);
-    if (current == INT_MAX) {
+bool BD3ESerial::MoveToTarget(int SlaveId, int targetPulse) {
+    if (!WriteParam32(SlaveId, 0x5305, static_cast<uint32_t>(targetPulse))) {
         ML::MLSpdlog::instance()->error(
-            "BD3ESerial: MoveToTarget failed, cannot read position for slave " +
+            "BD3ESerial: MoveToTarget write P5-305 failed for slave " +
             std::to_string(SlaveId));
         return false;
     }
-    if (std::abs(current - targetPulse) <= 10) {
-        ML::MLSpdlog::instance()->info(
-            "BD3ESerial: already at target for slave " + std::to_string(SlaveId));
-        return true;
+    if (!WriteParam16(SlaveId, 0x6004, 1)) {
+        ML::MLSpdlog::instance()->error(
+            "BD3ESerial: MoveToTarget write P6-004=1 failed for slave " +
+            std::to_string(SlaveId));
+        return false;
     }
-    int speed = (targetPulse > current) ? std::abs(rpm) : -std::abs(rpm);
-    bool ret = SetSpeed(SlaveId, speed);
-    if (ret) {
-        ML::MLSpdlog::instance()->info(
-            "BD3ESerial: move to target " + std::to_string(targetPulse) +
-            " pulse at " + std::to_string(speed) +
-            " rpm for slave " + std::to_string(SlaveId));
+    if (!WriteParam16(SlaveId, 0x6004, 0)) {
+        ML::MLSpdlog::instance()->error(
+            "BD3ESerial: MoveToTarget write P6-004=0 failed for slave " +
+            std::to_string(SlaveId));
+        return false;
     }
-    return ret;
+    ML::MLSpdlog::instance()->info(
+        "BD3ESerial: move to target " + std::to_string(targetPulse) +
+        " pulse for slave " + std::to_string(SlaveId));
+    return true;
+}
+
+bool BD3ESerial::SetControlMode(int SlaveId, uint16_t mode) {
+    return WriteParam16(SlaveId, 0x0101, mode);
+}
+
+bool BD3ESerial::SetAccelTime(int SlaveId, uint16_t ms) {
+    return WriteParam16(SlaveId, 0x4103, ms);
+}
+
+bool BD3ESerial::SetDecelTime(int SlaveId, uint16_t ms) {
+    return WriteParam16(SlaveId, 0x4104, ms);
 }
 
 bool BD3ESerial::WriteParam16(int SlaveId, uint16_t address, uint16_t value) {

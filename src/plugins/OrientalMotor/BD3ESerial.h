@@ -36,7 +36,11 @@ class BD3ESerial {
     int  GetCurrPosition(int SlaveId);
     int  GetSpeed(int SlaveId);
     bool SetSpeed(int SlaveId, int rpm);
-    bool MoveToTarget(int SlaveId, int targetPulse, int rpm);
+    bool MoveToTarget(int SlaveId, int targetPulse);
+
+    bool SetControlMode(int SlaveId, uint16_t mode);
+    bool SetAccelTime(int SlaveId, uint16_t ms);
+    bool SetDecelTime(int SlaveId, uint16_t ms);
 
     bool WriteParam16(int SlaveId, uint16_t address, uint16_t value);
     bool WriteParam32(int SlaveId, uint16_t address, uint32_t value);

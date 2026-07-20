@@ -19,13 +19,9 @@ BD3EMotorControl::~BD3EMotorControl() {
 void BD3EMotorControl::Init() {
     std::map<int, BD3EConfiguation> configMap =
         BD3EMotorConfig::instance()->GetBD3EConfigMap();
-    if (configMap.size() == 3) {
+    if (configMap.size() == 1) {
         Xmin = configMap[0].Min;
         Xmax = configMap[0].Max;
-        Ymin = configMap[1].Min;
-        Ymax = configMap[1].Max;
-        Zmin = configMap[2].Min;
-        Zmax = configMap[2].Max;
     }
     for (auto it = configMap.begin(); it != configMap.end(); ++it) {
         BD3ESerialManage::instance()->createBD3ESerial(it->second.port);
@@ -122,6 +118,42 @@ Result BD3EMotorControl::SetSpeed(int rpm) {
 
     for (auto it = m_MotorMap.begin(); it != m_MotorMap.end(); ++it) {
         MLBD3EResult result = it->second->ML_SetSpeed(rpm);
+        if (!result.code)
+            return Result(result.code, result.msg);
+    }
+    return Result();
+}
+
+Result BD3EMotorControl::SetControlMode(uint16_t mode) {
+    if (!IsConnected())
+        return Result(false, "Motor is not connected.");
+
+    for (auto it = m_MotorMap.begin(); it != m_MotorMap.end(); ++it) {
+        MLBD3EResult result = it->second->ML_SetControlMode(mode);
+        if (!result.code)
+            return Result(result.code, result.msg);
+    }
+    return Result();
+}
+
+Result BD3EMotorControl::SetAccelTime(uint16_t ms) {
+    if (!IsConnected())
+        return Result(false, "Motor is not connected.");
+
+    for (auto it = m_MotorMap.begin(); it != m_MotorMap.end(); ++it) {
+        MLBD3EResult result = it->second->ML_SetAccelTime(ms);
+        if (!result.code)
+            return Result(result.code, result.msg);
+    }
+    return Result();
+}
+
+Result BD3EMotorControl::SetDecelTime(uint16_t ms) {
+    if (!IsConnected())
+        return Result(false, "Motor is not connected.");
+
+    for (auto it = m_MotorMap.begin(); it != m_MotorMap.end(); ++it) {
+        MLBD3EResult result = it->second->ML_SetDecelTime(ms);
         if (!result.code)
             return Result(result.code, result.msg);
     }

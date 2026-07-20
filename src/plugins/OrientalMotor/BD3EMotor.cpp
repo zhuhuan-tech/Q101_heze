@@ -503,8 +503,7 @@ MLBD3EResult BD3EMotor::ML_MoveByDegree(
             static_cast<double>(m_config.PulsePerCycle) / 360.0 * degree);
         bool rt = BD3ESerialManage::instance()
                       ->getBD3ESerial(m_config.port)
-                      ->MoveToTarget(m_config.station, targetPulse,
-                                     m_config.MoveSpeed);
+                      ->MoveToTarget(m_config.station, targetPulse);
         if (!rt) {
             std::lock_guard<std::mutex> locker(_status_mutex);
             m_status = MLBD3EStatus::MLBD3EStatus_Error;
@@ -567,12 +566,13 @@ MLBD3EResult BD3EMotor::ML_MoveByDegreeSync(double degree) {
             ML::MLSpdlog::instance()->warn("BD3EMotor: " + ret.msg);
             return ret;
         }
-        int targetPulse = static_cast<int>(
-            static_cast<double>(m_config.PulsePerCycle) / 360.0 * degree);
-        int speed = m_config.MoveSpeed;
+        int targetPulse = static_cast<int>(static_cast<double>(m_config.PulsePerCycle) / 360.0 * degree);
+        targetPulse += m_config.ZeroPulse;
+
+        //int speed = m_config.MoveSpeed;
         bool rt = BD3ESerialManage::instance()
                       ->getBD3ESerial(m_config.port)
-                      ->MoveToTarget(m_config.station, targetPulse, speed);
+                      ->MoveToTarget(m_config.station, targetPulse);
         if (!rt) {
             std::lock_guard<std::mutex> locker(_status_mutex);
             m_status = MLBD3EStatus::MLBD3EStatus_Error;
@@ -584,7 +584,6 @@ MLBD3EResult BD3EMotor::ML_MoveByDegreeSync(double degree) {
         }
         int timeout = 30000;
         int count = 0;
-        int precision = 20;
         while (true) {
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
             count++;
@@ -600,10 +599,10 @@ MLBD3EResult BD3EMotor::ML_MoveByDegreeSync(double degree) {
                 ML::MLSpdlog::instance()->error("BD3EMotor: " + ret.msg);
                 return ret;
             }
-            int current = BD3ESerialManage::instance()
-                              ->getBD3ESerial(m_config.port)
-                              ->GetCurrPosition(m_config.station);
-            if (current == INT_MAX) {
+            int speedVal = BD3ESerialManage::instance()
+                               ->getBD3ESerial(m_config.port)
+                               ->GetSpeed(m_config.station);
+            if (speedVal == INT_MAX) {
                 BD3ESerialManage::instance()
                     ->getBD3ESerial(m_config.port)
                     ->StopMove(m_config.station);
@@ -612,11 +611,11 @@ MLBD3EResult BD3EMotor::ML_MoveByDegreeSync(double degree) {
                 ret.code = false;
                 ret.status = m_status;
                 ret.msg = _msg +
-                          " BD3EMotor ML_MoveByDegreeSync position read error";
+                          " BD3EMotor ML_MoveByDegreeSync speed read error";
                 ML::MLSpdlog::instance()->error("BD3EMotor: " + ret.msg);
                 return ret;
             }
-            if (std::abs(current - targetPulse) <= precision) {
+            if (speedVal == 0) {
                 break;
             }
             if (count * 100 > timeout) {
@@ -631,17 +630,6 @@ MLBD3EResult BD3EMotor::ML_MoveByDegreeSync(double degree) {
                 ML::MLSpdlog::instance()->warn("BD3EMotor: " + ret.msg);
                 return ret;
             }
-        }
-        if (!BD3ESerialManage::instance()
-                 ->getBD3ESerial(m_config.port)
-                 ->SetSpeed(m_config.station, 0)) {
-            std::lock_guard<std::mutex> locker(_status_mutex);
-            m_status = MLBD3EStatus::MLBD3EStatus_Error;
-            ret.code = false;
-            ret.status = m_status;
-            ret.msg = _msg + " BD3EMotor ML_MoveByDegreeSync stop failed";
-            ML::MLSpdlog::instance()->error("BD3EMotor: " + ret.msg);
-            return ret;
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(200));
         if (std::abs(ML_GetCurrDegree() - degree) > 0.3) {
@@ -694,6 +682,96 @@ int BD3EMotor::ML_GetSpeed() {
         std::lock_guard<std::mutex> locker(_status_mutex);
         m_status = MLBD3EStatus::MLBD3EStatus_SerialException;
         return INT_MAX;
+    }
+}
+
+MLBD3EResult BD3EMotor::ML_SetControlMode(uint16_t mode) {
+    MLBD3EResult ret;
+    try {
+        if (!ML_IsOpen()) {
+            m_status = MLBD3EStatus::MLBD3EStatus_Error;
+            ret.code = false; ret.status = m_status;
+            ret.msg = _msg + " BD3EMotor ML_SetControlMode error, not opened";
+            return ret;
+        }
+        bool rt = BD3ESerialManage::instance()
+                      ->getBD3ESerial(m_config.port)
+                      ->SetControlMode(m_config.station, mode);
+        if (!rt) {
+            m_status = MLBD3EStatus::MLBD3EStatus_Error;
+            ret.code = false; ret.status = m_status;
+            ret.msg = _msg + " BD3EMotor ML_SetControlMode failed";
+            return ret;
+        }
+        m_status = MLBD3EStatus::MLBD3EStatus_OK;
+        ret.code = true; ret.status = m_status;
+        ret.msg = _msg + " BD3EMotor ML_SetControlMode successfully";
+        return ret;
+    } catch (const std::exception& e) {
+        m_status = MLBD3EStatus::MLBD3EStatus_SerialException;
+        ret.code = false; ret.status = m_status;
+        ret.msg = _msg + " BD3EMotor ML_SetControlMode exception: " + e.what();
+        return ret;
+    }
+}
+
+MLBD3EResult BD3EMotor::ML_SetAccelTime(uint16_t ms) {
+    MLBD3EResult ret;
+    try {
+        if (!ML_IsOpen()) {
+            m_status = MLBD3EStatus::MLBD3EStatus_Error;
+            ret.code = false; ret.status = m_status;
+            ret.msg = _msg + " BD3EMotor ML_SetAccelTime error, not opened";
+            return ret;
+        }
+        bool rt = BD3ESerialManage::instance()
+                      ->getBD3ESerial(m_config.port)
+                      ->SetAccelTime(m_config.station, ms);
+        if (!rt) {
+            m_status = MLBD3EStatus::MLBD3EStatus_Error;
+            ret.code = false; ret.status = m_status;
+            ret.msg = _msg + " BD3EMotor ML_SetAccelTime failed";
+            return ret;
+        }
+        m_status = MLBD3EStatus::MLBD3EStatus_OK;
+        ret.code = true; ret.status = m_status;
+        ret.msg = _msg + " BD3EMotor ML_SetAccelTime successfully";
+        return ret;
+    } catch (const std::exception& e) {
+        m_status = MLBD3EStatus::MLBD3EStatus_SerialException;
+        ret.code = false; ret.status = m_status;
+        ret.msg = _msg + " BD3EMotor ML_SetAccelTime exception: " + e.what();
+        return ret;
+    }
+}
+
+MLBD3EResult BD3EMotor::ML_SetDecelTime(uint16_t ms) {
+    MLBD3EResult ret;
+    try {
+        if (!ML_IsOpen()) {
+            m_status = MLBD3EStatus::MLBD3EStatus_Error;
+            ret.code = false; ret.status = m_status;
+            ret.msg = _msg + " BD3EMotor ML_SetDecelTime error, not opened";
+            return ret;
+        }
+        bool rt = BD3ESerialManage::instance()
+                      ->getBD3ESerial(m_config.port)
+                      ->SetDecelTime(m_config.station, ms);
+        if (!rt) {
+            m_status = MLBD3EStatus::MLBD3EStatus_Error;
+            ret.code = false; ret.status = m_status;
+            ret.msg = _msg + " BD3EMotor ML_SetDecelTime failed";
+            return ret;
+        }
+        m_status = MLBD3EStatus::MLBD3EStatus_OK;
+        ret.code = true; ret.status = m_status;
+        ret.msg = _msg + " BD3EMotor ML_SetDecelTime successfully";
+        return ret;
+    } catch (const std::exception& e) {
+        m_status = MLBD3EStatus::MLBD3EStatus_SerialException;
+        ret.code = false; ret.status = m_status;
+        ret.msg = _msg + " BD3EMotor ML_SetDecelTime exception: " + e.what();
+        return ret;
     }
 }
 

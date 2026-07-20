@@ -27,6 +27,9 @@ namespace DUTMotion {
 		NodeStatus Specbos_Disconnect(BT::TreeNode& node);
 		NodeStatus Specbos_LoadCalibration(BT::TreeNode& node);
 		NodeStatus Specbos_Measurement(BT::TreeNode& node);
+		NodeStatus BD3EMotor_Open(BT::TreeNode& node);
+		NodeStatus BD3EMotor_Close(BT::TreeNode& node);
+		NodeStatus BD3EMotor_Degree_Async(BT::TreeNode& node);
 
 	private:
 		static DUTMotion4Recipe* self;
@@ -132,6 +135,34 @@ namespace DUTMotion {
 			{
 				BT::InputPort<std::string>("postion", "int, e.g. 4"),
 				BT::InputPort<std::string>("path", "E:\project\MLSpecbos")
+			});
+		factory.registerSimpleAction(
+			"BD3EMotor_Open",
+			[=](BT::TreeNode& node)-> BT::NodeStatus
+			{
+				return obj->BD3EMotor_Open(node);
+			},
+			{
+				
+			});
+		factory.registerSimpleAction(
+			"BD3EMotor_Close",
+			[=](BT::TreeNode& node)-> BT::NodeStatus
+			{
+				return obj->BD3EMotor_Close(node);
+			},
+			{
+
+			});
+		factory.registerSimpleAction(
+			"BD3EMotor_Degree_Async",
+			[=](BT::TreeNode& node)-> BT::NodeStatus
+			{
+				return obj->BD3EMotor_Degree_Async(node);
+			},
+			{
+				BT::InputPort<std::string>("module", "string, e.g. X/Y/Z"),
+				BT::InputPort<std::string>("degree", "double")
 			});
 	}
 }

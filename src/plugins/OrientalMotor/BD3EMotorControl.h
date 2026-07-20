@@ -24,6 +24,10 @@ public:
     Result ServoOffAll();
 
     Result SetSpeed(int rpm);
+
+    Result SetControlMode(uint16_t mode);
+    Result SetAccelTime(uint16_t ms);
+    Result SetDecelTime(uint16_t ms);
     int  GetSpeed(int type);
     int  GetCurrPulse(int type);
     double GetCurrDegree(int type);

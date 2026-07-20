@@ -2,6 +2,7 @@
 #include "OrientalMotorControl.h"
 #include "MLSpecbosLogic.h"
 #include "SpecbosMotionWidget.h"
+#include "BD3EMotorControl.h"
 #include "loggingwrapper.h"
 #include <QFile>
 #include <QTextStream>
@@ -403,5 +404,63 @@ NodeStatus DUTMotion4Recipe::Specbos_Measurement(BT::TreeNode& node)
 	}
 
 	return BT::NodeStatus::SUCCESS;
+}
 
+NodeStatus DUTMotion4Recipe::BD3EMotor_Open(BT::TreeNode& node)
+{
+	BD3EMotorControl* montor = BD3EMotorControl::getInstance();
+	Result ret;
+	if (nullptr != montor)
+	{
+		ret = montor->Connect();
+	}
+	else
+	{
+		ret = Result(false, "can not get montor");
+	}
+	if (!ret.success)
+	{
+		QString strerr = QString("Recipe [BD3EMotor: BD3EMotor_Open] run error,%1").arg(QString::fromStdString(ret.errorMsg));
+		LoggingWrapper::instance()->error(strerr);
+		return BT::NodeStatus::FAILURE;
+	}
+	return BT::NodeStatus::SUCCESS;
+}
+
+NodeStatus DUTMotion4Recipe::BD3EMotor_Close(BT::TreeNode& node)
+{
+	BD3EMotorControl* montor = BD3EMotorControl::getInstance();
+	Result ret;
+	if (nullptr != montor)
+	{
+		ret = montor->Disconnect();
+	}
+	else
+	{
+		ret = Result(false, "can not get montor");
+	}
+	if (!ret.success)
+	{
+		QString strerr = QString("Recipe [BD3EMotor: BD3EMotor_Close] run error,%1").arg(QString::fromStdString(ret.errorMsg));
+		LoggingWrapper::instance()->error(strerr);
+		return BT::NodeStatus::FAILURE;
+	}
+	return BT::NodeStatus::SUCCESS;
+}
+
+NodeStatus DUTMotion4Recipe::BD3EMotor_Degree_Async(BT::TreeNode& node)
+{
+	QString module = getNodeValueByName(node, "module");
+	QString target_Degree = getNodeValueByName(node, "degree");
+
+	BD3EMotorControl* motorControl = BD3EMotorControl::getInstance();
+	Result res = motorControl->MoveByDegreeSync(module.toInt(), target_Degree.toDouble());
+	if (!res.success)
+	{
+		QString message = QString("Recipe [ BD3EMotor : BD3EMotor_Degree_Async ] run error, %1").arg(QString::fromStdString(res.errorMsg));
+		LoggingWrapper::instance()->error(message);
+		return BT::NodeStatus::FAILURE;
+	}
+
+	return BT::NodeStatus::SUCCESS;
 }
