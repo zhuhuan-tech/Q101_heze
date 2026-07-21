@@ -133,18 +133,10 @@ bool BD3ESerial::CheckSerial(int SlaveId) {
 }
 
 bool BD3ESerial::ServoOn(int SlaveId) {
-    int val = ReadParam16(SlaveId, 0x6401);
-    if (val == INT_MAX || val == 0) {
-        ML::MLSpdlog::instance()->info(
-            "BD3ESerial: enable comm DI for slave " + std::to_string(SlaveId));
-        if (!WriteParam16(SlaveId, 0x6401, 1)) {
-            return false;
-        }
-        Sleep(10);
-    }
-    if (!WriteParam16(SlaveId, 0x6402, 0x0001)) {
+    if (!WriteParam16(SlaveId, 0x6002, 1)) {
         ML::MLSpdlog::instance()->error(
-            "BD3ESerial: servo on failed for slave " + std::to_string(SlaveId));
+            "BD3ESerial: motor enable failed for slave " +
+            std::to_string(SlaveId));
         return false;
     }
     ML::MLSpdlog::instance()->info(
@@ -153,9 +145,10 @@ bool BD3ESerial::ServoOn(int SlaveId) {
 }
 
 bool BD3ESerial::ServoOff(int SlaveId) {
-    if (!WriteParam16(SlaveId, 0x6402, 0x0000)) {
+    if (!WriteParam16(SlaveId, 0x6002, 0)) {
         ML::MLSpdlog::instance()->error(
-            "BD3ESerial: servo off failed for slave " + std::to_string(SlaveId));
+            "BD3ESerial: motor disable failed for slave " +
+            std::to_string(SlaveId));
         return false;
     }
     ML::MLSpdlog::instance()->info(

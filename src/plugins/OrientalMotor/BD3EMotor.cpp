@@ -77,6 +77,10 @@ MLBD3EResult BD3EMotor::ML_OpenSerialSync() {
             ret.status = m_status;
             ret.msg = _msg + " BD3EMotor ML_OpenSerialSync successfully";
             ML::MLSpdlog::instance()->info("BD3EMotor: " + ret.msg);
+            //电机使能
+            BD3ESerialManage::instance()
+                ->getBD3ESerial(m_config.port)
+                ->ServoOn(m_config.station);
             return ret;
         }
         std::lock_guard<std::mutex> locker(_status_mutex);
@@ -111,6 +115,10 @@ MLBD3EResult BD3EMotor::ML_CloseSerial() {
             ML::MLSpdlog::instance()->error("BD3EMotor: " + ret.msg);
             return ret;
         }
+        //电机去使能
+        BD3ESerialManage::instance()
+            ->getBD3ESerial(m_config.port)
+            ->ServoOff(m_config.station);
         BD3ESerialManage::instance()->closeConnection(m_config.port);
         int connection =
             BD3ESerialManage::instance()->getConnection(m_config.port);
